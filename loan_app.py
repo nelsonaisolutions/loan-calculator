@@ -192,7 +192,6 @@ with col1:
         get_translation("Durée (mois)"), 
         min_value=1, 
         step=1, 
-        value=st.session_state.duration_months,
         key="duration_months",
         on_change=update_duration_years
     )
@@ -202,7 +201,6 @@ with col2:
         get_translation("Durée (années)"),
         min_value=0.1,  # Allow smaller values
         max_value=50.0,
-        value=st.session_state.duration_years,
         step=0.1,  # Allow finer steps
         key="duration_years",
         on_change=update_duration_months,
