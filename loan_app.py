@@ -115,7 +115,7 @@ def update_duration_months():
 def update_duration_years():
     """Updates the duration in years based on months."""
     if "duration_months" in st.session_state:
-        st.session_state.duration_years = st.session_state.duration_months / 12
+        st.session_state.duration_years = int(round(st.session_state.duration_months / 12))
 
 def highlight_total_row(df):
     """Highlights the total row in grey."""
@@ -182,7 +182,13 @@ st.write(get_translation("Calculez facilement les détails de votre prêt."))
 
 # Sidebar
 st.sidebar.header(get_translation("Paramètres du Prêt"))
-principal = st.sidebar.number_input(get_translation("Montant du Prêt (€)"), min_value=1000.0, step=100.0, format="%.2f", key="principal")
+principal = st.sidebar.number_input(
+    get_translation("Montant du Prêt (€)"), 
+    min_value=1000, 
+    step=1000,  # Using 1000 for easier whole number selection
+    format="%d",  # This shows integers only (no decimals)
+    key="principal"
+)
 taeg = st.sidebar.number_input(get_translation("TAEG (%)"), min_value=0.1, step=0.01, format="%.2f", key="taeg")
 
 # Duration inputs - place months and years next to each other
@@ -199,12 +205,12 @@ with col1:
 with col2:
     st.number_input(
         get_translation("Durée (années)"),
-        min_value=0.1,  # Allow smaller values
-        max_value=50.0,
-        step=0.1,  # Allow finer steps
+        min_value=1,
+        max_value=50,
+        step=1,
         key="duration_years",
         on_change=update_duration_months,
-        format="%.1f"
+        format="%d"  # Integer format - no decimals
     )
 
 # Insurance inputs
