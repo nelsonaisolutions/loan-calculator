@@ -107,6 +107,16 @@ def update_insurance_amount():
     else:
         st.session_state.insurance_amount = 0.0
 
+def update_duration_months():
+    """Updates the duration in months based on years."""
+    if "duration_years" in st.session_state:
+        st.session_state.duration_months = int(st.session_state.duration_years * 12)
+
+def update_duration_years():
+    """Updates the duration in years based on months."""
+    if "duration_months" in st.session_state:
+        st.session_state.duration_years = st.session_state.duration_months / 12
+
 def highlight_total_row(df):
     """Highlights the total row in grey."""
     def highlight(row):
@@ -143,6 +153,7 @@ translations = {
     "Les valeurs doivent être positives.": {"Français": "Les valeurs doivent être positives.", "English": "Values must be positive."},
     "Ajustez les valeurs et cliquez sur 'Calculer' pour voir les détails de votre prêt. 💸": {"Français": "Ajustez les valeurs et cliquez sur 'Calculer' pour voir les détails de votre prêt. 💸", "English": "Adjust the values and click 'Calculate' to see the details of your loan. 💸"},
     "Assurance (%)": {"Français": "Assurance (%)", "English": "Insurance (%)"},  # THIS IS THE NEW LINE
+    "Durée (années)": {"Français": "Durée (années)", "English": "Duration (years)"},  # THIS IS THE NEW LINE
 }
 
 def get_translation(text_key):
@@ -158,6 +169,7 @@ st.session_state.setdefault("insurance_percentage", 0.0)
 st.session_state.setdefault("principal", 30000.0)
 st.session_state.setdefault("taeg", 4.45)
 st.session_state.setdefault("duration_months", 57)
+st.session_state.setdefault("duration_years", 57/12)  # Add this line to initialize years
 st.session_state.setdefault("show_amortization_table", False)
 st.session_state.setdefault("amortization_table", pd.DataFrame())
 st.session_state.setdefault("loan_data", {})
@@ -172,7 +184,31 @@ st.write(get_translation("Calculez facilement les détails de votre prêt."))
 st.sidebar.header(get_translation("Paramètres du Prêt"))
 principal = st.sidebar.number_input(get_translation("Montant du Prêt (€)"), min_value=1000.0, step=100.0, format="%.2f", key="principal")
 taeg = st.sidebar.number_input(get_translation("TAEG (%)"), min_value=0.1, step=0.01, format="%.2f", key="taeg")
-duration_months = st.sidebar.number_input(get_translation("Durée (mois)"), min_value=1, step=1, key="duration_months")
+
+# Duration inputs - place months and years next to each other
+col1, col2 = st.sidebar.columns(2)
+with col1:
+    duration_months = st.number_input(
+        get_translation("Durée (mois)"), 
+        min_value=1, 
+        step=1, 
+        value=st.session_state.duration_months,
+        key="duration_months",
+        on_change=update_duration_years
+    )
+
+with col2:
+    st.number_input(
+        get_translation("Durée (années)"),
+        min_value=0.1,  # Allow smaller values
+        max_value=50.0,
+        value=st.session_state.duration_years,
+        step=0.1,  # Allow finer steps
+        key="duration_years",
+        on_change=update_duration_months,
+        format="%.1f"
+    )
+
 # Insurance inputs
 st.sidebar.header(get_translation("Assurance"))
 insurance_amount = st.sidebar.number_input(
