@@ -37,7 +37,7 @@ streamlit run loan_app.py
 ```
 
 ## Online Demo
-Access the live version of this calculator at: [Streamlit Cloud Link]
+Access the live version of this calculator at: https://loan-calculator.streamlit.app/
 
 ## Calculation Methods
 The calculator uses standard financial formulas:
