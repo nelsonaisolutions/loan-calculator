@@ -261,3 +261,38 @@ if st.session_state.show_amortization_table:
         st.dataframe(styled_table)
 
 st.write(get_translation("Ajustez les valeurs et cliquez sur 'Calculer' pour voir les détails de votre prêt. 💸"))
+
+# Add styled footer with copyright and license information
+st.markdown("---")
+st.markdown("""
+<div style="text-align: center; color: gray; padding: 10px;">
+    © 2025 Nelson Ai Solutions - 
+    <a href="#" id="license-link">MIT License</a>
+</div>
+""", unsafe_allow_html=True)
+
+# Add expandable license section
+with st.expander("MIT License Details"):
+    st.markdown("""
+    **MIT License**
+
+    Copyright (c) 2025 Nelson Ai Solutions
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+    """)
