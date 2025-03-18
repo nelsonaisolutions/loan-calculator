@@ -59,37 +59,40 @@ def create_amortization_table(principal, monthly_rate, monthly_payment, duration
 
     df = pd.DataFrame(data, columns=[get_translation("Mois"), get_translation("Capital Restant Du en Début de Période"), get_translation("Capital Amorti"), get_translation("Intérêts"), get_translation("Assurance"), get_translation("Total Echeance")])
 
-    # Format the columns with 2 decimals
-    df[get_translation("Capital Restant Du en Début de Période")] = df[get_translation("Capital Restant Du en Début de Période")].map(lambda x: f"{x:.2f}")
-    df[get_translation("Capital Amorti")] = df[get_translation("Capital Amorti")].map(lambda x: f"{x:.2f}")
-    df[get_translation("Intérêts")] = df[get_translation("Intérêts")].map(lambda x: f"{x:.2f}")
-    df[get_translation("Assurance")] = df[get_translation("Assurance")].map(lambda x: f"{x:.2f}")
-    df[get_translation("Total Echeance")] = df[get_translation("Total Echeance")].map(lambda x: f"{x:.2f}")
+    # Calculate the totals BEFORE formatting (while still numeric)
+    total_capital_amorti = df[get_translation("Capital Amorti")].sum()
+    total_interest_paid = df[get_translation("Intérêts")].sum()
+    total_insurance = df[get_translation("Assurance")].sum()
+    total_echeance = df[get_translation("Total Echeance")].sum()
 
-    # Calculate the totals
-    total_capital_amorti = df[get_translation("Capital Amorti")].astype(float).sum()
-    total_interest_paid = df[get_translation("Intérêts")].astype(float).sum()
-    total_insurance = df[get_translation("Assurance")].astype(float).sum()
-    total_echeance = df[get_translation("Total Echeance")].astype(float).sum()
+    # NOW format with commas for display
+    df[get_translation("Capital Restant Du en Début de Période")] = df[get_translation("Capital Restant Du en Début de Période")].map(lambda x: f"{x:,.2f}")
+    df[get_translation("Capital Amorti")] = df[get_translation("Capital Amorti")].map(lambda x: f"{x:,.2f}")
+    df[get_translation("Intérêts")] = df[get_translation("Intérêts")].map(lambda x: f"{x:,.2f}")
+    df[get_translation("Assurance")] = df[get_translation("Assurance")].map(lambda x: f"{x:,.2f}")
+    df[get_translation("Total Echeance")] = df[get_translation("Total Echeance")].map(lambda x: f"{x:,.2f}")
 
-    # Add the total row to the dataframe
-    total_row = pd.DataFrame({get_translation("Mois"): [get_translation("Total")], get_translation("Capital Restant Du en Début de Période"): [""], get_translation("Capital Amorti"): [f"{total_capital_amorti:.2f}"], get_translation("Intérêts"): [f"{total_interest_paid:.2f}"], get_translation("Assurance"): [f"{total_insurance:.2f}"], get_translation("Total Echeance"): [f"{total_echeance:.2f}"]})
+    # Add the total row with already formatted numbers
+    total_row = pd.DataFrame({
+        get_translation("Mois"): [get_translation("Total")], 
+        get_translation("Capital Restant Du en Début de Période"): [""], 
+        get_translation("Capital Amorti"): [f"{total_capital_amorti:,.2f}"], 
+        get_translation("Intérêts"): [f"{total_interest_paid:,.2f}"], 
+        get_translation("Assurance"): [f"{total_insurance:,.2f}"], 
+        get_translation("Total Echeance"): [f"{total_echeance:,.2f}"]
+    })
     df = pd.concat([df, total_row], ignore_index=True)
 
     return df
 
 def display_loan_details(loan_data):
-    """Displays the loan details in a Streamlit table.
-
-    Args:
-        loan_data (dict): The dictionary returned by calculate_loan().
-    """
+    """Displays the loan details in a Streamlit table."""
     results = {
-        get_translation("Mensualité"): f"{loan_data['monthly_payment']:.2f} €",
-        get_translation("Coût Total"): f"{loan_data['total_cost']:.2f} €",
-        get_translation("Total Remboursé"): f"{loan_data['total_paid']:.2f} €",
+        get_translation("Mensualité"): f"{loan_data['monthly_payment']:,.2f} €",
+        get_translation("Coût Total"): f"{loan_data['total_cost']:,.2f} €",
+        get_translation("Total Remboursé"): f"{loan_data['total_paid']:,.2f} €",
         get_translation("Coût en % du Prêt"): f"{loan_data['cost_percentage']:.2f} %",
-        get_translation("Coût Assurance Total"): f"{loan_data['insurance_total_cost']:.2f} €",
+        get_translation("Coût Assurance Total"): f"{loan_data['insurance_total_cost']:,.2f} €",
     }
     st.table(results.items())
 
